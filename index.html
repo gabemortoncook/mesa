@@ -1,0 +1,1716 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <title>Testing Flexible Tables</title>
+   <style type="text/css">
+   body{
+   text-align:center;
+   }
+   #header{
+   display:block;
+   width:980px;
+   margin:0 auto;
+   height:30px;
+   text-align:left;
+ 
+   }
+   table{font-family:arial;font-size:12px;border-collapse:collapse; border-top: 3px solid #ddd;}
+   h3{font-family:arial;float:left;margin:2px 18px;font-size:16px;}
+   td, th{text-align:left;vertical-align:top;padding:10px; border-bottom:1px solid #ddd;white-space:nowrap;}
+   a{text-decoration:none;}
+   thead{background:#e8e8e8}
+  .firstcol {
+            position:absolute;
+            width:121px; 
+            top:auto;
+            margin-top:1px;
+            padding:10px 4px;
+  }
+  th.firstcol{background:#e8e8e8;height:30px;border-top:3px solid #ddd;margin-top:-3px;margin-bottom:1px;}
+    .lastcol {
+            position:absolute;
+            width:40px; 
+            top:auto;
+            margin-top:1px;
+            padding:10px 4px;
+  }
+  th.lastcol{background:#e8e8e8;text-indent:0;height:30px;border-top:3px solid #ddd;margin-top:-3px;margin-bottom:1px;}
+  div#wrapper {
+            width:820px;
+            overflow:hidden;  
+            margin-left:120px;
+            margin-right:40px; 
+            padding-bottom:1px; 
+  }
+  .scrolling div#wrapper{
+          box-shadow:0 15px 12px #ccc inset;
+  }
+
+  .controls{float:left;width:100%}
+  .controls div span{display:block;height:20px;width:20px;margin-right:10px;float:left;text-indent:-9999px;background:url(tableicon.png);}
+  #wide{background-position:0 -20px;cursor:pointer;}
+  #narrow{background-position:-20px 0;}
+  .wide #wide{background-position:-20px -20px;cursor:default;}
+  .wide #narrow{background-position:0 0;cursor:pointer;}
+  #securityTable{margin-left:0;}
+  #rightscroll,#leftscroll{cursor:pointer;border:1px solid #ddd;border-width:0 1px;background:#f8f8f8 url(tableicon.png) -1px -70px no-repeat;;width:16px;height:100%;text-indent:-9909px;position:absolute;top:0;right:46px;display:none}
+  #leftscroll{right:null;left:128px;background-position:-2px -140px}
+  .scrolling .leftScroll #leftscroll{display:block;}
+  .scrolling .rightScroll #rightScroll{display:block;}
+  #rightscroll:hover,#leftscroll:hover{background-color:#ddd;}
+ </style>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+  <script>
+  jQuery(document).ready(function($) {   
+    
+  checkArrows = function(){
+    $('#wrapper').removeClass("leftScroll");
+    $('#wrapper').removeClass("rightScroll");
+    curScroll = $("#wrapper").scrollLeft();
+    maxScroll = $("#securityTable").width()-$("#wrapper").width();
+    
+    if(curScroll<maxScroll){
+      $('#wrapper').addClass("rightScroll");
+    }
+    if(curScroll>0){
+      $('#wrapper').addClass("leftScroll");
+    }
+    }
+    
+    $("#leftscroll").click(function() {  
+      $('#wrapper').animate({scrollLeft:'-=100'}, 100, function(){checkArrows()});
+   }); 
+   $("#rightscroll").click(function() { 
+      $('#wrapper').animate({scrollLeft:'+=100'}, 100, function(){checkArrows()});
+  }); 
+   
+    makenarrow = function(){
+      $("body").removeClass("wide");
+      var bodywidth = $("body").width();
+      var leftedge = (bodywidth - 930)/2;
+      var leftmar = leftedge + 120;
+      var rightmar = leftedge + 900;
+      $("#wrapper").css("width","774px");
+      $("#wrapper").css("margin-left",leftmar+"px");
+      $("body").addClass("scrolling");
+      $(".firstcol").css("left",leftedge+"px");
+      $(".lastcol").css("left",rightmar+"px");
+    }
+    makewide = function(){
+      $("body").addClass("wide");
+      bodywidth = $("body").width();
+      tablewidth = $("#securityTable").width();
+      // if table data is wider than window move firstcol and lastcol to edges
+      if (bodywidth < tablewidth + 180){
+        leftedge = 0;
+        leftmar = 120;
+        rightmar = bodywidth-34;
+        $("#wrapper").css("width",bodywidth-160+"px");
+        $("#wrapper").css("margin-left",leftmar+"px");
+        $("body").addClass("scrolling");
+        $(".firstcol").css("left",leftedge+"px");
+        $(".lastcol").css("left",rightmar+"px");
+      //else window is wider than table data: show standard table, centered on page
+      } else {
+        leftedge = (bodywidth - (tablewidth-82))/2;
+        leftmar = 120;
+        rightmar = leftedge + tablewidth+6;
+        $("#wrapper").css("width",tablewidth+"px");
+        $("#wrapper").css("margin-left",leftedge+"px");
+        $("body").removeClass("scrolling");
+        $(".firstcol").css("left",(leftedge-leftmar)+"px");   
+        $(".lastcol").css("left",rightmar+"px");      
+      }
+    }
+    $("#wide").click(function() {
+      makewide(); 
+   });                                         
+   $("#narrow").click(function() {
+      makenarrow();
+   });    
+   resizer = function(){
+   if($("body").hasClass("wide")){
+        makewide();
+     }else{
+        makenarrow();         
+     }
+   }
+   $(window).resize(function() {
+   resizer();  
+   });
+   resizer();     
+ });
+  </script>
+  </head>
+  <body>
+  <div id="header">
+  <div class="controls"><div style="float:right;height:20px;width:120px;padding:5px 0;"><span id="narrow">narrow</span><span id="wide">wide</span></div></div>
+  </div>
+  <div id="wrapper" class="rightScroll">
+  <table aria-describedby="EquityGroupHeader" class="securityTable" id="securityTable" style="width:auto;">
+                    <thead id="theader">
+                        <tr class="header-row">
+                                <th class="firstcol">
+                                    Symbol
+                                    <span id="leftscroll">left</span>
+                                </th>
+                                <th class="left">
+                                    Description (<span class="no-select-toggle-longdesc" style="display:none;">Full</span><a class="toggle-longdesc" href="javascript:;" onclick="ToggleColumns('longdesc', 'shortdesc')">Full</a> | <span class="no-select-toggle-shortdesc">Short</span><a class="toggle-shortdesc" style="display:none;" href="javascript:;" onclick="ToggleColumns('shortdesc', 'longdesc')">Short</a>)
+                                </th>
+                                <th class="numeric">
+                                    Quantity
+                                </th>
+                                <th class="numeric">
+                                    Price
+                                </th>
+                                <th class="numeric">
+                                    Price Change<br> (<span class="no-select-toggle-pricechangedollar">$</span><a class="toggle-pricechangedollar" style="display:none;" href="javascript:;" onclick="ToggleColumns('pricechangedollar', 'pricechangepercent',this)">$</a> | <span class="no-select-toggle-pricechangepercent" style="display:none;">%</span><a class="toggle-pricechangepercent" href="javascript:;" onclick="ToggleColumns('pricechangepercent', 'pricechangedollar',this)">%</a>)
+                                </th>
+                                <th class="numeric">
+                                    Market Value
+                                </th>
+                                <th class="numeric">
+                                    Day Change<br> (<span class="no-select-toggle-daychangedollar">$</span><a class="toggle-daychangedollar" style="display:none;" href="javascript:;" onclick="ToggleColumns('daychangedollar', 'daychangepercent',this)">$</a> | <span class="no-select-toggle-daychangepercent" style="display:none;">%</span><a class="toggle-daychangepercent" href="javascript:;" onclick="ToggleColumns('daychangepercent', 'daychangedollar',this)">%</a>)
+                                </th>
+                                <th class="left">
+                                    Reinvest<br>Dividends?
+                                </th>
+                                <th class="numeric">
+                                    % of <br>Account
+                                </th>
+                                <th class="numeric">
+                                    Margin<br>Requirement
+                                </th>
+                                <th class="numeric">
+                                    Day Change<br> (<span class="no-select-toggle-daychangedollar">$</span><a class="toggle-daychangedollar" style="display:none;" href="javascript:;" onclick="ToggleColumns('daychangedollar', 'daychangepercent',this)">$</a> | <span class="no-select-toggle-daychangepercent" style="display:none;">%</span><a class="toggle-daychangepercent" href="javascript:;" onclick="ToggleColumns('daychangepercent', 'daychangedollar',this)">%</a>)
+                                </th>
+                                <th class="left">
+                                    Reinvest<br>Dividends?
+                                </th>
+                              
+                                <th class="lastcol">
+                                    Next<br>Steps
+                                    <span id="rightscroll">right</span>
+                                </th>
+                        </tr>        
+                    </thead> 
+                    <tbody>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>NO NUMBER</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">A F G INVESTORS TRUST C REG LTD PTNRSHP ASSETS HELD @ GENL PTNR</span><span class="shortdesc">A F G INVESTORS TRUST C...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AHGP"><b>AHGP</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIANCE HOLDINGS GP LP</span><span class="shortdesc">ALLIANCE HOLDINGS GP LP</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -1
+                                    </td>
+                                    <td class="numeric">
+                                        $59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+6.76</span><span class="pricechangepercent mark-positive" style="display:none;">+12.83%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        -$59.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-negative">-6.76</span><span class="daychangepercent mark-negative" style="display:none;">-12.83%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AHGP', '1077218', '2122980059', '0', '1', 'ALLIANCE HOLDINGS GP LP', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                            
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>Q02233106</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ALLIED GOLD LTD ORD XXX 1-6 R/S &amp; N/C TO ALLIED GOLD MINING ORD 06/30/11</span><span class="shortdesc">ALLIED GOLD LTD ORD XXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                 
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AOBI"><b>AOBI</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">AMERN ORIENTAL BIO NEW</span><span class="shortdesc">AMERN ORIENTAL BIO NEW</span>
+                                    </td>
+                                    <td class="numeric">
+                                        491.1246
+                                    </td>
+                                    <td class="numeric">
+                                        $0.43
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+0.03</span><span class="pricechangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $211.18
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+14.73</span><span class="daychangepercent mark-positive" style="display:none;">+7.5%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:false, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AOBI', '1139062', '1753410822', '0', '1', 'AMERN ORIENTAL BIO NEW', 'False', this); return false;">No</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0%
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                  
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>037023108</b>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">ANTHRACITE CAPITAL INXXX REGISTRATION REVOKED BY THE SEC EFF 06/13/12</span><span class="shortdesc">ANTHRACITE CAPITAL INXXX...</span>
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar white-space">N/A</span><span class="pricechangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Not Marginable
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <a href="/SymbolRouting.aspx?Symbol=AAPL"><b>AAPL</b></a>
+                                    </td>
+                                    <td class="description">
+                                        <span class="longdesc" style="display:none;">APPLE INC</span><span class="shortdesc">APPLE INC</span>
+                                    </td>
+                                    <td class="numeric">
+                                        1,234.56789
+                                    </td>
+                                    <td class="numeric">
+                                        $445.52
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="pricechangedollar mark-positive">+2.86</span><span class="pricechangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="numeric">
+                                        $550,024.69
+                                    </td>
+                                    <td class="numeric">
+                                        <span class="daychangedollar mark-positive">+3,530.86</span><span class="daychangepercent mark-positive" style="display:none;">+0.65%</span>
+                                    </td>
+                                    <td class="center">
+                                        <a class="dividend" data-currentoptions="{&quot;dividends&quot;:true, &quot;capitalgains&quot;:false }" href="javascript:void(0);" onclick="javascript:CreateOverlay('88808169', 'AAPL', '1180932', '1973757747', '0', '1', 'APPLE INC', 'False', this); return false;">Yes</a>
+                                    </td>
+                                    <td class="numeric">
+                                        0.11%
+                                    </td>
+                                    <td class="numeric">
+                                        --
+                                    </td>
+                                       <td class="numeric">
+                                        <span class="daychangedollar white-space">N/A</span><span class="daychangepercent white-space" style="display:none;">N/A</span>
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                               
+                                     <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                    </tbody>
+                </table> 
+                </div>
+  </body>
+</html>
