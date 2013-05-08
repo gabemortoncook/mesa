@@ -1,0 +1,598 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+  <title>Testing Flexible Tables</title>
+   <style type="text/css">
+   body{
+   text-align:center;
+   }
+   #header{
+   display:block;
+   width:980px;
+   margin:0 auto;
+   height:30px;
+   text-align:left;
+
+   }
+   table{font-family:arial;font-size:12px;border-collapse:collapse; border-top: 3px solid #ddd;}
+   h3{font-family:arial;float:left;margin:2px 18px;font-size:16px;}
+   td, th{text-align:left;vertical-align:top;padding:10px; border-bottom:1px solid #ddd;white-space:nowrap;}
+   a{text-decoration:none;}
+   thead{background:#e8e8e8;}
+  td.quote{}
+  .firstcol {
+            position:absolute;
+            width:121px; 
+            top:auto;
+            margin-top:1px;
+            padding:10px 4px;
+  }
+  th.firstcol{background:#e8e8e8;;border-top:3px solid #ddd;margin-top:-3px;margin-bottom:1px;}
+    .lastcol {
+            position:absolute;
+            width:50px; 
+            top:auto;
+            margin-top:1px;
+            padding:10px 4px;
+  }
+  th.lastcol{background:#e8e8e8;text-indent:0;border-top:3px solid #ddd;margin-top:-3px;margin-bottom:1px;}
+  div#wrapper {
+            width:830px;
+            overflow:hidden;  
+            margin-left:120px;
+            margin-right:50px; 
+            padding-bottom:1px;
+  }
+  div#wrapper.leftScroll {
+          box-shadow:3px 15px 3px #eee inset;
+  }
+  div#wrapper.rightScroll {
+          box-shadow:-3px 15px 3px #eee inset;
+  }
+  div#wrapper.leftScroll.rightScroll {
+          box-shadow:3px 15px 3px #eee inset,-3px 15px 3px #eee inset;
+  }
+  .controls{float:left;width:100%}
+  .controls div span{display:block;height:20px;width:20px;margin-right:10px;float:left;text-indent:-9999px;background:url(tableicon.png);}
+  #wide{background-position:0 -20px;cursor:pointer;}
+  #narrow{background-position:-20px 0;}
+  .wide #wide{background-position:-20px -20px;cursor:default;}
+  .wide #narrow{background-position:0 0;cursor:pointer;}
+  .wide div#wrapper{box-shadow:none;}
+  #myTable{margin-left:0;}
+  #rightscroll,#leftscroll{cursor:pointer;border:1px solid #ddd;border-width:0 1px;background:#f8f8f8 url(tableicon.png) -1px -76px no-repeat;width:16px;height:100%;text-indent:-9909px;position:absolute;top:0;right:58px;display:none}
+  #leftscroll{right:null;left:128px;background-position:-2px -145px}
+  .scrolling .leftScroll #leftscroll{display:block;}
+  .scrolling .rightScroll #rightScroll{display:block;}
+  #rightscroll:hover,#leftscroll:hover{background-color:#ddd;}
+ </style>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+  <script>
+  jQuery(document).ready(function($) {   
+    
+  checkArrows = function(){
+    $('#wrapper').removeClass("leftScroll");
+    $('#wrapper').removeClass("rightScroll");
+    curScroll = $("#wrapper").scrollLeft();
+    maxScroll = $("#myTable").width()-$("#wrapper").width();
+    
+    if(curScroll<maxScroll){
+      $('#wrapper').addClass("rightScroll");
+    }
+    if(curScroll>0){
+      $('#wrapper').addClass("leftScroll");
+    }
+    }
+    
+    $("#leftscroll").click(function(event) {   
+      $('#wrapper').addClass("leftScroll");
+      $('#wrapper').addClass("rightScroll");
+      event.preventDefault();
+      $('#wrapper').animate({scrollLeft:'-=275'}, 275, function(){checkArrows()});
+   }); 
+   $("#rightscroll").click(function(event) { 
+      $('#wrapper').addClass("leftScroll");
+      $('#wrapper').addClass("rightScroll");
+      event.preventDefault();
+      $('#wrapper').animate({scrollLeft:'+=275'}, 275, function(){checkArrows()});
+  }); 
+   
+    makenarrow = function(){
+      $("body").removeClass("wide");
+      var bodywidth = $("body").width();
+      var leftedge = (bodywidth - 950)/2;
+      var leftmar = leftedge + 120;
+      var rightmar = leftedge + 880;
+      $("#wrapper").css("width","752px");
+      $("#wrapper").css("margin-left",leftmar+"px");
+      $("body").addClass("scrolling");
+      $(".firstcol").css("left",leftedge+"px");
+      $(".lastcol").css("left",rightmar+"px");
+      $('#wrapper').removeClass("leftScroll");
+      $('#wrapper').addClass("rightScroll");
+    }
+    makewide = function(){
+      $("body").addClass("wide");
+      bodywidth = $("body").width();
+      tablewidth = $("#myTable").width();
+      // if table data is wider than window move firstcol and lastcol to edges
+      if (bodywidth < tablewidth + 180){
+        leftedge = 0;
+        leftmar = 120;
+        rightmar = bodywidth-34;
+        $("#wrapper").css("width",bodywidth-160+"px");
+        $("#wrapper").css("margin-left",leftmar+"px");
+        $("body").addClass("scrolling");
+        $(".firstcol").css("left",leftedge+"px");
+        $(".lastcol").css("left",rightmar+"px");
+      //else window is wider than table data: show standard table, centered on page
+      } else {
+        leftedge = (bodywidth - (tablewidth-82))/2;
+        leftmar = 120;
+        rightmar = leftedge + tablewidth+6;
+        $("#wrapper").css("width",tablewidth+"px");
+        $("#wrapper").css("margin-left",leftedge+"px");
+        $("body").removeClass("scrolling");
+        $(".firstcol").css("left",(leftedge-leftmar)+"px");   
+        $(".lastcol").css("left",rightmar+"px");      
+      }
+    }
+    $("#wide").click(function() {
+      makewide(); 
+   });                                         
+   $("#narrow").click(function() {
+      makenarrow();
+   });    
+   resizer = function(){
+   if($("body").hasClass("wide")){
+        makewide();
+     }else{
+        makenarrow();         
+     }
+   }
+   $(window).resize(function() {
+   resizer();  
+   });
+   resizer(); 
+   
+ });
+  </script>
+  </head>
+  <body>
+  <div id="header">
+  <div class="controls"><div style="float:right;height:20px;width:120px;padding:5px 0;"><span id="narrow">narrow</span><span id="wide">wide</span></div></div>
+  </div>
+  <div id="wrapper" class="rightScroll">
+  <table class="myTable" id="myTable" style="width:auto;">
+                    <thead id="theader">
+                        <tr class="header-row">
+                                <th class="firstcol">
+                                    Symbol
+                                    <span id="leftscroll">left</span>
+                                </th>
+                                <th class="left">
+                                    Description 
+                                </th>
+                                <th class="numeric">
+                                    Header 3
+                                </th>
+                                <th class="numeric">
+                                    Header 4
+                                </th>
+                                <th class="numeric">
+                                    Header 5
+                                </th>
+                                <th class="numeric">
+                                    Header 6
+                                </th>
+                                <th class="numeric">
+                                    Header 7    
+                                </th>
+                                <th class="left">
+                                    Header 8
+                                </th>
+                                <th class="numeric">
+                                    Header 9
+                                </th>
+                                <th class="numeric">
+                                    Header 10
+                                </th>
+                                <th class="numeric">
+                                    Header 11
+                                </th>
+                                <th class="left">
+                                    Header 12 
+                                </th>
+                              
+                                <th class="lastcol">
+                                    Actions
+                                    <span id="rightscroll">right</span>
+                                </th>
+                        </tr>        
+                    </thead> 
+                    <tbody>
+                            <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                             <tr class="data-row">
+                                    <td class="firstcol">
+                                        <b>ABCDEF</b>
+                                    </td>
+                                    <td class="description">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    </td>
+                                    <td class="numeric">
+                                        12
+                                    </td>
+                                    <td class="numeric quote">
+                                        $12.34
+                                    </td>
+                                    <td class="numeric quote">
+                                        -$1.23    
+                                    </td>
+                                    <td class="numeric">
+                                        12,345,678.90
+                                    </td>
+                                    <td class="numeric">
+                                        +45.67%    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                    <td class="numeric">
+                                        Yes
+                                    </td>
+                                    <td class="numeric">
+                                        Lorem Ipsum
+                                    </td>
+                                    <td class="numeric">
+                                        123.45    
+                                    </td>
+                                    <td class="center">
+                                        N/A
+                                    </td>
+                                
+                                    <td class="lastcol">
+                                        ...
+                                    </td>
+                            </tr>
+                    </tbody>
+                </table> 
+                </div>
+  </body>
+</html>
